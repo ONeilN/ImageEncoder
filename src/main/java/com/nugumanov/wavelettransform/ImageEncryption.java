@@ -3,12 +3,13 @@ package com.nugumanov.wavelettransform;
 import com.nugumanov.wavelettransform.encryptors.EncryptionType;
 import com.nugumanov.wavelettransform.encryptors.Encryptor;
 import com.nugumanov.wavelettransform.encryptors.KeyHelper;
+import com.nugumanov.wavelettransform.transforms.Encryption;
 import com.nugumanov.wavelettransform.transforms.TransformType;
 import com.nugumanov.wavelettransform.transforms.WaveletType;
 
 import java.awt.image.BufferedImage;
 
-public class ImageEncryption {
+public class ImageEncryption implements Encryption {
 
     Encryptor encryptor = null;
     ImageTransformation transformation = new ImageTransformation();
