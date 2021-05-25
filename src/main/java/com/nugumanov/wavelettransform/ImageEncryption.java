@@ -28,9 +28,16 @@ public class ImageEncryption implements Encryption {
         return encrypted;
     }
 
-    public BufferedImage decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
+    public byte[] decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
 
-        return null;
+        byte[] decrypted = null;
+
+        encryptor = EncryptorFactory.getEncryptor(type);
+        keyHelper = KeyHelper.getInstance(type);
+
+        decrypted = encryptor.decryptImage(encrypted, keyHelper.getKey());
+
+        return decrypted;
     }
 
 }
