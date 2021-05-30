@@ -3,11 +3,12 @@ package com.nugumanov.wavelettransform;
 import com.nugumanov.wavelettransform.encryptors.EncryptionType;
 import com.nugumanov.wavelettransform.encryptors.Encryptor;
 import com.nugumanov.wavelettransform.encryptors.KeyHelper;
-import com.nugumanov.wavelettransform.transforms.Encryption;
 import com.nugumanov.wavelettransform.transforms.TransformType;
 import com.nugumanov.wavelettransform.transforms.WaveletType;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 
 public class ImageEncryption implements Encryption {
 
@@ -28,8 +29,9 @@ public class ImageEncryption implements Encryption {
         return encrypted;
     }
 
-    public byte[] decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
+    public BufferedImage decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
 
+        BufferedImage bufferedImage = null;
         byte[] decrypted = null;
 
         encryptor = EncryptorFactory.getEncryptor(type);
@@ -37,7 +39,14 @@ public class ImageEncryption implements Encryption {
 
         decrypted = encryptor.decryptImage(encrypted, keyHelper.getKey());
 
-        return decrypted;
+        ByteArrayInputStream bais = new ByteArrayInputStream(decrypted);
+        try {
+            bufferedImage = ImageIO.read(bais);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bufferedImage;
     }
 
 }
