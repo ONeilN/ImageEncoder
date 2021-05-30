@@ -32,6 +32,7 @@ public class ImageEncryption implements Encryption {
     public BufferedImage decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
 
         BufferedImage bufferedImage = null;
+        BufferedImage decryptedImage = null;
         byte[] decrypted = null;
 
         encryptor = EncryptorFactory.getEncryptor(type);
@@ -46,7 +47,9 @@ public class ImageEncryption implements Encryption {
             e.printStackTrace();
         }
 
-        return bufferedImage;
+        decryptedImage = transformation.transform(bufferedImage, TransformType.REVERSE, waveletType, 2);
+
+        return decryptedImage;
     }
 
 }
