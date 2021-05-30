@@ -24,22 +24,6 @@ public class KeyHelper {
         }
     }
 
-//    private KeyHelper(String userKey) {
-//        byte[] tmp = null;
-//        MessageDigest sha = null;
-//        try {
-//            tmp = userKey.getBytes("UTF-8");
-//            sha = MessageDigest.getInstance("SHA-1");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        tmp = sha.digest(tmp);
-//        tmp = Arrays.copyOf(tmp, 16); // use only first 128 bit
-//
-//        key = new SecretKeySpec(tmp, "AES");
-//    }
-
-
     public static KeyHelper getInstance(EncryptionType encryptionType) {
         if (instance == null) {
             instance = new KeyHelper(encryptionType);
@@ -47,7 +31,7 @@ public class KeyHelper {
         return instance;
     }
 
-    public void setKey(String userKey){
+    public void setKey(String userKey, EncryptionType type){
         byte[] tmp = null;
         MessageDigest sha = null;
         try {
@@ -59,14 +43,21 @@ public class KeyHelper {
         tmp = sha.digest(tmp);
         tmp = Arrays.copyOf(tmp, 16); // use only first 128 bit
 
-        key = new SecretKeySpec(tmp, "AES");
+        key = new SecretKeySpec(tmp, type.toString());
     }
 
-    public void setKey(SecretKey userKey) {
-        this.key = userKey;
+    public void setKey(byte[] userKey, EncryptionType type) {
+        this.key = new SecretKeySpec(userKey, type.toString());
     }
 
     public SecretKey getKey() {
         return key;
     }
+
+    public byte[] getByteKey() {
+
+        byte[] byteKey = key.getEncoded();
+        return byteKey;
+    }
+
 }
