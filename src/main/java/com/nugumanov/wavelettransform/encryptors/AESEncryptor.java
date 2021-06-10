@@ -1,16 +1,16 @@
 package com.nugumanov.wavelettransform.encryptors;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
-public class AESEncryptor implements Encryptor{
+/**
+ * Класс который реализует интерфейс Encryptor. Реализует алгоритм шифрования AES.
+ */
+public class AESEncryptor implements Encryptor {
 
     Cipher cipher;
 
@@ -30,8 +30,6 @@ public class AESEncryptor implements Encryptor{
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypted = cipher.doFinal(image);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,16 +58,6 @@ public class AESEncryptor implements Encryptor{
     }
 
     @Override
-    public BufferedImage encryptBuffImage(byte[] image, SecretKey key) {
-        return null;
-    }
-
-    @Override
-    public BufferedImage encryptBuffImage(BufferedImage buffImage, SecretKey key) {
-        return null;
-    }
-
-    @Override
     public byte[] decryptImage(byte[] image, SecretKey key) {
 
         byte[] decrypted = null;
@@ -84,18 +72,29 @@ public class AESEncryptor implements Encryptor{
         return decrypted;
     }
 
-    @Override
-    public byte[] decryptImage(BufferedImage buffImage, SecretKey key) {
-        return new byte[0];
-    }
 
     @Override
-    public BufferedImage decryptBuffImage(byte[] image, SecretKey key) {
-        return null;
-    }
+    public BufferedImage decryptImageBuffImage(byte[] image, SecretKey key) {
 
-    @Override
-    public BufferedImage decryptBuffImage(BufferedImage buffImage, SecretKey key) {
-        return null;
+        BufferedImage bufferedImage = null;
+        byte[] decrypted = null;
+        ByteArrayInputStream bais = null;
+
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            decrypted = cipher.doFinal(image);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        bais = new ByteArrayInputStream(decrypted);
+
+        try {
+            bufferedImage = ImageIO.read(bais);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return bufferedImage;
     }
 }

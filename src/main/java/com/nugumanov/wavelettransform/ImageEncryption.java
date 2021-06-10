@@ -6,16 +6,19 @@ import com.nugumanov.wavelettransform.encryptors.KeyHelper;
 import com.nugumanov.wavelettransform.transforms.TransformType;
 import com.nugumanov.wavelettransform.transforms.WaveletType;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import java.io.*;
 
+/**
+ * Класс который реализует алгоритм шифрования изображений при помощи вейвлет-преобразования.
+ */
 public class ImageEncryption implements Encryption {
 
     Encryptor encryptor = null;
     ImageTransformation transformation = new ImageTransformation();
     KeyHelper keyHelper = null;
 
+    @Override
     public byte[] encrypt(BufferedImage buffImage, EncryptionType type, WaveletType waveletType) {
 
         byte[] encrypted = null;
@@ -29,6 +32,19 @@ public class ImageEncryption implements Encryption {
         return encrypted;
     }
 
+    @Override
+    public byte[] encrypt(byte[] image, EncryptionType type) {
+
+        byte[] encrypted = null;
+        encryptor = EncryptorFactory.getEncryptor(type);
+        keyHelper = KeyHelper.getInstance(type);
+
+        encrypted = encryptor.encryptImage(image, keyHelper.getKey());
+
+        return encrypted;
+    }
+
+    @Override
     public BufferedImage decrypt(byte[] encrypted, EncryptionType type, WaveletType waveletType) {
 
         BufferedImage bufferedImage = null;
@@ -38,18 +54,46 @@ public class ImageEncryption implements Encryption {
         encryptor = EncryptorFactory.getEncryptor(type);
         keyHelper = KeyHelper.getInstance(type);
 
-        decrypted = encryptor.decryptImage(encrypted, keyHelper.getKey());
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(decrypted);
-        try {
-            bufferedImage = ImageIO.read(bais);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bufferedImage = encryptor.decryptImageBuffImage(encrypted, keyHelper.getKey());
 
         decryptedImage = transformation.transform(bufferedImage, TransformType.REVERSE, waveletType, 2);
 
         return decryptedImage;
     }
 
+    @Override
+    public void saveEncryptedImageToFile(byte[] encryptedImage, File file) {
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(encryptedImage);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public byte[] loadEncryptedImageFromFile(File file) {
+
+        InputStream is = null;
+        byte[] encryptedImage = null;
+
+        try {
+            is = new FileInputStream(file);
+        } catch (FileNotFoundException e2) {
+            e2.printStackTrace();
+        }
+        try {
+            encryptedImage = new byte[is.available()];
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            is.read(encryptedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return encryptedImage;
+    }
 }
