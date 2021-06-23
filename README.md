@@ -1,2 +1,2 @@
-# WaveletImageConversion
-Library for wavelet image conversion.
+# Image wavelet encryptor
+Library for encrypting images using wavelet transform.
